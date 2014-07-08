@@ -1,24 +1,54 @@
 <!DOCTYPE html>
 <head>
    <title>Current Status</title>
+   <link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet" />
 </head>
 
 <body>
-   <h1>Device Listing and Status</h1>
 
-   {% for pin in pins %}
-   <p>The {{ pins[pin].name }}
-   {% if pins[pin].state == true %}
-      is currently on (<a href="/{{pin}}/off">turn off</a>)
-   {% else %}
-      is currently off (<a href="/{{pin}}/on">turn on</a>)
-   {% endif %}
-   </p>
-   {% endfor %}
+   <table cellspacing=0 cellpadding=0>
+      <tr>
+         <td></td>
+         <td>
+            {% include 'menu.html' %}
+         </td>
+      </tr>
 
-   {% if message %}
-   <h2>{{ message }}</h2>
-   {% endif %}
+      <tr>
+         <td class='info'>
+            {% include 'info.html' %}
+         </td>
+         <td id='content'>
+            {% include 'default.html' %}
+         </td>
+      </tr>
+   </table>
+
+   <script type=text/javascript src="{{ url_for('static', filename='jquery.js') }}">
+   </script>
+
+   <script type=text/javascript>
+     $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+   </script>
+
+   <script type=text/javascript>
+     $(function() {
+       $('a.menu-button').bind('click', function() {
+
+         var buttonID = this.id;
+         $(this).siblings().removeClass('selected-menu-button');
+         $(this).addClass('selected-menu-button');
+
+         $.getJSON($SCRIPT_ROOT + '/get_content', {
+           id: buttonID
+         }, function(data) {
+           $("#content").text(data.result);
+         });
+
+         return false;
+       });
+     });
+   </script>
 
 </body>
 </html>
