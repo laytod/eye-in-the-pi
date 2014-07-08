@@ -2,6 +2,13 @@
 <head>
    <title>Current Status</title>
    <link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet" />
+
+   <script type=text/javascript src="{{ url_for('static', filename='jquery.js') }}">
+   </script>
+
+   <script type=text/javascript>
+     $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+   </script>
 </head>
 
 <body>
@@ -23,13 +30,6 @@
          </td>
       </tr>
    </table>
-
-   <script type=text/javascript src="{{ url_for('static', filename='jquery.js') }}">
-   </script>
-
-   <script type=text/javascript>
-     $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
-   </script>
 
    <script type=text/javascript>
      $(function() {

@@ -44,37 +44,54 @@ def get_content():
 
 
 # The function below is executed when someone requests a URL with the pin number and action in it:
-@app.route("/<changePin>/<action>")
-def action(changePin, action):
-   # Convert the pin from the URL into an integer:
-   changePin = int(changePin)
-   # Get the device name for the pin being changed:
-   deviceName = pins[changePin]['name']
-   # If the action part of the URL is "on," execute the code indented below:
-   if action == "on":
-      # Set the pin high:
-      GPIO.output(changePin, GPIO.HIGH)
-      # Save the status message to be passed into the template:
-      message = "Turned " + deviceName + " on."
-   if action == "off":
-      GPIO.output(changePin, GPIO.LOW)
-      message = "Turned " + deviceName + " off."
-   if action == "toggle":
-      # Read the pin and set it to whatever it isn't (that is, toggle it):
-      GPIO.output(changePin, not GPIO.input(changePin))
-      message = "Toggled " + deviceName + "."
+@app.route("/changePin")
+def action():
+   action = request.args.get('action', None)
+   pin = request.args.get('pin', None)
+   pin = int(pin)
 
-   # For each pin, read the pin state and store it in the pins dictionary:
-   for pin in pins:
-      pins[pin]['state'] = GPIO.input(pin)
+   try:
+      if action == 'off':
+         GPIO.output(pin, GPIO.HIGH)
+      elif action == 'on':
+         GPIO.output(pin, GPIO.LOW)
 
-   # Along with the pin dictionary, put the message into the template data dictionary:
-   templateData = {
-      'message' : message,
-      'pins' : pins,
-   }
+      result = True
+   except:
+      result = False
 
-   return render_template('main.html', **templateData)
+   return jsonify(result=result)
+
+   # # Convert the pin from the URL into an integer:
+   # changePin = int(changePin)
+   # # Get the device name for the pin being changed:
+   # deviceName = pins[changePin]['name']
+   # # If the action part of the URL is "on," execute the code indented below:
+   # if action == "on":
+   #    # Set the pin high:
+   #    GPIO.output(changePin, GPIO.HIGH)
+   #    # Save the status message to be passed into the template:
+   #    message = "Turned " + deviceName + " on."
+   # if action == "off":
+   #    GPIO.output(changePin, GPIO.LOW)
+   #    message = "Turned " + deviceName + " off."
+   # if action == "toggle":
+   #    # Read the pin and set it to whatever it isn't (that is, toggle it):
+   #    GPIO.output(changePin, not GPIO.input(changePin))
+   #    message = "Toggled " + deviceName + "."
+
+   # # For each pin, read the pin state and store it in the pins dictionary:
+   # for pin in pins:
+   #    pins[pin]['state'] = GPIO.input(pin)
+
+   # # Along with the pin dictionary, put the message into the template data dictionary:
+   # templateData = {
+   #    'message' : message,
+   #    'pins' : pins,
+   # }
+
+   # # return jsonify(result=content)
+   # return render_template('main.html', **templateData)
 
 
 if __name__ == "__main__":

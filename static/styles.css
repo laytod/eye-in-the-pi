@@ -43,3 +43,14 @@
 	border-top-left-radius: .5em;
 	border-top-right-radius: .5em;
 }
+
+.pin-toggle {
+	padding: 5px;
+	display: inline;
+	width: 20px;
+	background-color: red;
+}
+
+.pin-toggle-on {
+	background-color: green;
+}
