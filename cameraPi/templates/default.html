@@ -1,0 +1,50 @@
+<h1>Default content page</h1>
+
+
+<table class='pin-table'>
+{% for pin in pins %}
+	<tr>
+		<td>
+			The {{ pins[pin].name }} is currently
+		</td>
+		<td>
+		{% if pins[pin].state == true %}
+			<center><div class='pin-toggle pin-toggle-on' id="{{pin}}">on</div></center>
+		{% else %}
+			<center><div class='pin-toggle' id="{{pin}}">off</div></center>
+		{% endif %}
+		</td>
+	</tr>
+{% endfor %}
+</table>
+
+
+<script type=text/javascript>
+	$(function() {
+		$('div.pin-toggle').bind('click', function() {
+
+			var pinValue = $(this).text();
+			var pin = $(this).attr('id');
+
+			if (pinValue === 'on') {
+				$(this).removeClass('pin-toggle-on');
+				$(this).text('off');
+			}
+			else {
+				$(this).addClass('pin-toggle-on');
+				$(this).text('on');
+			}
+
+
+			$.getJSON($SCRIPT_ROOT + '/changePin', {
+				pin: pin,
+				action: pinValue
+			}, function(data) {
+
+				// alert(action);
+			});
+
+		return false;
+		});
+	});
+</script>

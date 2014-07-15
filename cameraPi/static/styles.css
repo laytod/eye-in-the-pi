@@ -44,11 +44,19 @@
 	border-top-right-radius: .5em;
 }
 
+.pin-table {
+	/*padding: 30px;*/
+	margin: 75px;
+}
+
 .pin-toggle {
 	padding: 5px;
-	display: inline;
 	width: 20px;
 	background-color: red;
+	border-bottom-left-radius: .5em;
+	border-bottom-right-radius: .5em;
+	border-top-left-radius: .5em;
+	border-top-right-radius: .5em;
 }
 
 .pin-toggle-on {

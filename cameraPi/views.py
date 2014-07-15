@@ -1,13 +1,17 @@
 from flask import Flask, url_for, render_template, jsonify, request
+from cameraPi import app
+
 import datetime
 import RPi.GPIO as GPIO
-app = Flask(__name__)
+
 
 GPIO.setmode(GPIO.BCM)
 ## GPIO.cleanup()
 GPIO.setwarnings(False)
 
-pins = { 17 : {'name': 'led01', 'state': GPIO.LOW} }
+pins = { 17 : {'name': 'green', 'state': GPIO.LOW},
+         22 : {'name': 'yellow', 'state': GPIO.LOW},
+         23 : {'name': 'red', 'state': GPIO.LOW} }
 # pins = {}
 
 for pin in pins:
@@ -29,10 +33,20 @@ def main():
 
 @app.route('/get_content')
 def get_content():
+
    buttonID = request.args.get('id', 'Button ID not found.')
 
    if buttonID == 'button1':
-      content = 'Button 1 content area'
+      for pin in pins:
+         pins[pin]['state'] = GPIO.input(pin)
+
+      templateData = {
+         'pins' : pins
+      }
+      content = render_template('default.html', **templateData)
+      f = open('test.out', 'w')
+      f.write(content)
+      f.close
    elif buttonID == 'button2':
       content = 'You clicked on button 2.  Good for you!'
    elif buttonID == 'button3':
@@ -92,7 +106,3 @@ def action():
 
    # # return jsonify(result=content)
    # return render_template('main.html', **templateData)
-
-
-if __name__ == "__main__":
-   app.run(host='0.0.0.0', port=8088, debug=True)
