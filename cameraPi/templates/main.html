@@ -15,7 +15,13 @@
 
 	<table cellspacing=0 cellpadding=0>
 		<tr>
-			<td></td>
+			<td>
+				{% if current_user.is_authenticated() %}
+					<a class='option' href='/logout'>Logout</a>
+				{% else %}
+					<a class='option' href='/login'>Login</a
+				{% endif %}
+			</td>
 			<td>
 				{% include 'menu.html' %}
 			</td>

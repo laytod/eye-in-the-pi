@@ -1,0 +1,55 @@
+{% block content %}
+
+	<head>
+		<link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet" />
+	</head>
+	<div class='login'>
+		<h2>Sign In</h2>
+		{% if form.user.errors or form.password.errors %}
+			<ul>
+				{% for message in form.user.errors %}
+					<li class="error-message">{{ message }}</li>
+				{% endfor %}
+
+				{% for message in form.password.errors %}
+					<li class="error-message">{{ message }}</li>
+				{% endfor %}
+			</ul>
+
+			<br />
+		{% endif %}
+
+		<form method="POST">
+			{{ form.hidden_tag() }}
+
+			<table align='center'>
+				<tr>
+					<td>
+						{{ form.user.label }}
+					</td>
+					<td>
+						{{ form.user }}
+					</td>
+				</tr>
+				<tr>
+					<td>
+						{{ form.password.label }}
+					</td>
+					<td>
+						{{ form.password }}
+					</td>
+				</tr>
+				<!-- <tr>
+					<td>{{ form.rememberMe }} {{form.rememberMe.label }}</td>
+					<td colspan='2'>
+						{{ form.rememberMe }} {{form.rememberMe.label }} <div align="right">{{ form.submit }}</div>
+					</td>
+				</tr> -->
+			</table>
+			<br />
+			{{ form.rememberMe }} {{form.rememberMe.label }} <div align="right">{{ form.submit }}</div>
+			
+		</form>
+	</div>
+
+{% endblock %}

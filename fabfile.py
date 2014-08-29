@@ -8,7 +8,7 @@ def copy_repo():
 		hostname = str(local('hostname', capture=True))
 
 	if hostname == 'TheDude':
-		destination = 'pi:~/flask/'
+		destination = 'pi@192.168.1.102:~/flask/'
 	elif hostname == 'pibox':
 		destination = 'TheDude:~/pi/flask/'
 	else:

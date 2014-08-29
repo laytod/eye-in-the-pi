@@ -12,6 +12,20 @@
 	background-color: #BDD09F;
 }
 
+.option {
+	border-top-left-radius: 1em;
+	border-top-right-radius: 1em;
+	display: inline;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	padding-left: 15px;
+	padding-right: 15px;
+	font-size: 20px;
+	color: black;
+	text-decoration: none;
+	background-color: #BDD09F;
+}
+
 .selected-menu-button {
 	background-color: #668D3C;
 }
@@ -45,7 +59,6 @@
 }
 
 .pin-table {
-	/*padding: 30px;*/
 	margin: 75px;
 }
 
@@ -61,4 +74,22 @@
 
 .pin-toggle-on {
 	background-color: green;
+}
+
+.login {
+	width: 250px;
+	padding-left: 15px;
+	padding-right: 15px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	background-color: #BDD09F;
+	border-bottom-left-radius: .5em;
+	border-bottom-right-radius: .5em;
+	border-top-left-radius: .5em;
+	border-top-right-radius: .5em;
+}
+
+.error-message {
+	color: red;
+	font-weight: bold;
 }

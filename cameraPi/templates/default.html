@@ -1,4 +1,4 @@
-<h1>Default content page</h1>
+<h1>Pin Status:</h1>
 
 
 <table class='pin-table'>
@@ -8,11 +8,13 @@
 			The {{ pins[pin].name }} is currently
 		</td>
 		<td>
-		{% if pins[pin].state == true %}
-			<center><div class='pin-toggle pin-toggle-on' id="{{pin}}">on</div></center>
-		{% else %}
-			<center><div class='pin-toggle' id="{{pin}}">off</div></center>
-		{% endif %}
+			<center>
+				{% if pins[pin].state == true %}
+					<div class='pin-toggle pin-toggle-on' id="{{pin}}">on</div>
+				{% else %}
+					<div class='pin-toggle' id="{{pin}}">off</div>
+				{% endif %}
+			</center>
 		</td>
 	</tr>
 {% endfor %}

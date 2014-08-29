@@ -1,8 +1,17 @@
-from flask import Flask, url_for, render_template, jsonify, request
-from cameraPi import app
-
 import datetime
 import RPi.GPIO as GPIO
+
+from flask import url_for, render_template, jsonify, request, redirect
+from cameraPi import app, login_manager, logger
+
+# give alias to logger
+# logger = app.logger
+
+from flask.ext.login import current_user, login_required, login_user, logout_user
+from forms import LoginForm
+from models import User
+
+from emails import send_alert
 
 
 GPIO.setmode(GPIO.BCM)
@@ -18,8 +27,39 @@ for pin in pins:
 	GPIO.setup(pin,GPIO.OUT)
 	GPIO.output(pin, GPIO.LOW)
 
+@login_manager.user_loader
+def load_user(userID):
+   return User.get(int(userID))
+
+@login_manager.unauthorized_handler
+def unauthorized():
+   return redirect(url_for('login', next=request.path))
+
+@app.route('/test')
+def test():
+   logger.info(current_user.username)
+   return str(current_user.is_authenticated())
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+   form = LoginForm()
+
+   if form.validate_on_submit():
+      login_user(User.selectBy(username=form.user.data).getOne(), remember=form.rememberMe.data)
+      logger.info('Logged in {user}'.format(user=current_user.username))
+      return redirect(request.args.get('next') or url_for('index'))
+
+   return render_template('login.html', form=form)
+
+@app.route('/logout')
+def logout():
+   logger.info("Logging out {user}".format(user=current_user.username))
+   logout_user()
+   return redirect(url_for('index'))
+
 @app.route("/")
-def main():
+@login_required
+def index():
    # For each pin, read the pin state and store it in the pins dictionary:
    for pin in pins:
       pins[pin]['state'] = GPIO.input(pin)
@@ -32,6 +72,7 @@ def main():
    return render_template('main.html', **templateData)
 
 @app.route('/get_content')
+@login_required
 def get_content():
 
    buttonID = request.args.get('id', 'Button ID not found.')
@@ -59,6 +100,7 @@ def get_content():
 
 # The function below is executed when someone requests a URL with the pin number and action in it:
 @app.route("/changePin")
+@login_required
 def action():
    action = request.args.get('action', None)
    pin = request.args.get('pin', None)
@@ -74,35 +116,18 @@ def action():
    except:
       result = False
 
+   logger.info('Turned pin {pin} {action}'.format(
+         pin=pin,
+         action=action))
    return jsonify(result=result)
 
-   # # Convert the pin from the URL into an integer:
-   # changePin = int(changePin)
-   # # Get the device name for the pin being changed:
-   # deviceName = pins[changePin]['name']
-   # # If the action part of the URL is "on," execute the code indented below:
-   # if action == "on":
-   #    # Set the pin high:
-   #    GPIO.output(changePin, GPIO.HIGH)
-   #    # Save the status message to be passed into the template:
-   #    message = "Turned " + deviceName + " on."
-   # if action == "off":
-   #    GPIO.output(changePin, GPIO.LOW)
-   #    message = "Turned " + deviceName + " off."
-   # if action == "toggle":
-   #    # Read the pin and set it to whatever it isn't (that is, toggle it):
-   #    GPIO.output(changePin, not GPIO.input(changePin))
-   #    message = "Toggled " + deviceName + "."
 
-   # # For each pin, read the pin state and store it in the pins dictionary:
-   # for pin in pins:
-   #    pins[pin]['state'] = GPIO.input(pin)
+@app.route("/mail")
+def send_mail():
+   recipients = ['laytod@gmail.com']
+   send_alert(recipients)
+   return "Sent"
 
-   # # Along with the pin dictionary, put the message into the template data dictionary:
-   # templateData = {
-   #    'message' : message,
-   #    'pins' : pins,
-   # }
 
-   # # return jsonify(result=content)
-   # return render_template('main.html', **templateData)
+
+
