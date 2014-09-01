@@ -1,3 +1,57 @@
 <center>
-<img class='stream' width=640 height=480 src="http://192.168.1.105:8080/?action=stream" />
+
+<!-- <img class='stream' id='camera_stream' width=640 height=480 src="/static/camera/image.jpg" /> -->
+
+<img class='stream' id='camera_stream' width=640 height=480 src="http://192.168.1.102:8080/?action=stream" />
 </center>
+
+<script type=text/javascript>
+
+// $(document).ready(function() {
+//        window.setInterval("refreshCamera();", 1000); 
+//        // one second interval
+//     });
+
+//     var url = '/static/camera/image.jpg';
+//     var forcerefresh = 0;
+
+//     function refreshCamera()
+//     {
+//        forcerefresh = forcerefresh + 1;
+//        $('#camera_stream').attr('src',url+'?');
+
+// $(document).ready(function() {
+//     var $img = $('#camera_stream');
+//     var forcerefresh  = 0;
+//     setInterval(function() {
+//         $.get('http://localhost:8088/static/camera/image.jpg?key=val&', function(data) {
+//             var $loader = $(document.createElement('img'));
+//             $loader.one('load', function() {
+//                 $img.attr('src', $loader.attr('src'));
+//             });
+//             $loader.attr('src', data);
+//             if($loader.complete) {
+//                 $loader.trigger('load');
+//             }
+//         });
+//     }, 5000);
+// });
+
+// URL to your cam image
+// var cam_image = 'http://192.168.1.102:8088/static/camera/image.jpg';
+
+// var buffer = {};
+// function preload() {
+//     buffer = new Image();
+//     // attaching the seconds breaks cache
+//     buffer.src = cam_image + '?' + (new Date()).getTime();
+//     buffer.onload = function() {
+//     	console.log('loaded image')
+//         setTimeout(preload, 1000); // 1 second refresh
+//         // setTimeout(preload, 500); // .5 second refresh
+//         document.getElementById('camera_stream').src = buffer.src;
+//     }
+// }
+// preload();
+
+</script>

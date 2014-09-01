@@ -1,0 +1,1 @@
+LD_LIBRARY_PATH=/usr/local/lib mjpg_streamer -i "input_file.so -f /run/shm -n image.jpg" -o "output_http.so -w /usr/local/www"
