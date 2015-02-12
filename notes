@@ -1,0 +1,12 @@
+--------------------------------------------------
+SSH TUNNEL
+--------------------------------------------------
+# This command will keep 2 reverse ssh tunnels alive.
+#    8080 (web server) is the cam stream (pi:8080)
+#    8022 (web server) is ssh to pi (pi:22)
+# -f puts command directly into background
+# -M sets the port for ssh to monitor ssh tunnels
+# -N no commands will be executed from the shell over
+#    the ssh tunnel
+#
+autossh -M 20000 -f -N camserv -R 8080:localhost:8080 -R 8022:localhost:22

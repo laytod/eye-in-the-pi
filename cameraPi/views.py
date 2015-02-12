@@ -1,5 +1,4 @@
 import datetime
-import RPi.GPIO as GPIO
 
 from flask import url_for, render_template, jsonify, request, redirect
 from cameraPi import app, login_manager, logger
@@ -14,18 +13,8 @@ from models import User
 from emails import send_alert
 
 
-GPIO.setmode(GPIO.BCM)
-## GPIO.cleanup()
-GPIO.setwarnings(False)
+pins = {}
 
-pins = { 17 : {'name': 'green', 'state': GPIO.LOW},
-         22 : {'name': 'yellow', 'state': GPIO.LOW},
-         23 : {'name': 'red', 'state': GPIO.LOW} }
-# pins = {}
-
-for pin in pins:
-	GPIO.setup(pin,GPIO.OUT)
-	GPIO.output(pin, GPIO.LOW)
 
 @login_manager.user_loader
 def load_user(userID):
@@ -60,10 +49,6 @@ def logout():
 @app.route("/")
 @login_required
 def index():
-   # For each pin, read the pin state and store it in the pins dictionary:
-   for pin in pins:
-      pins[pin]['state'] = GPIO.input(pin)
-
    # Put the pin dictionary into the template data dictionary:
    templateData = {
       'pins' : pins
@@ -78,9 +63,6 @@ def get_content():
    buttonID = request.args.get('id', 'Button ID not found.')
 
    if buttonID == 'button1':
-      for pin in pins:
-         pins[pin]['state'] = GPIO.input(pin)
-
       templateData = {
          'pins' : pins
       }
@@ -107,11 +89,6 @@ def action():
    pin = int(pin)
 
    try:
-      if action == 'off':
-         GPIO.output(pin, GPIO.HIGH)
-      elif action == 'on':
-         GPIO.output(pin, GPIO.LOW)
-
       result = True
    except:
       result = False
