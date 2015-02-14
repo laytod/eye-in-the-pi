@@ -70,22 +70,23 @@ def toggle_pin():
          pin=pin
       ))
 
-      status = json.loads(r.content)
 
       if r.status_code == 200:
          logger.info('Toggled pin {pin}'.format(
                pin=pin
          ))
+         status = json.loads(r.content)
+         return jsonify(status)
       else:
          logger.info('Toggling pin {pin} failed.'.format(
             pin=pin
          ))
+         return render_template('error.html'), 500
 
-      return jsonify(status)
 
    except Exception as e:
       logger.exception(e)
-      return jsonify(dict(response=False))
+      return render_template('error.html'), 500
 
 
 @app.route("/mail")
