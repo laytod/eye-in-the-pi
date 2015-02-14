@@ -24,26 +24,33 @@
 <script type=text/javascript>
 	$(function() {
 		$('div.pin-toggle').bind('click', function() {
-
-			var pinValue = $(this).text();
 			var pin = $(this).attr('id');
 
-			if (pinValue === 'on') {
-				$(this).removeClass('pin-toggle-on');
-				$(this).text('off');
-			}
-			else {
-				$(this).addClass('pin-toggle-on');
-				$(this).text('on');
-			}
+			$.ajax({
+				type: 'POST',
+				url: $SCRIPT_ROOT + 'toggle_pin',
+				data: {
+					pin: pin,
+				},
+				error: function(response) {
+					console.log(response);
+				},
+				success: function(response) {
+					pins = $('.pin-toggle');
 
+					$.each(response, function (index, value) {
+						pin = $('#' + index + '.pin-toggle');
 
-			$.getJSON($SCRIPT_ROOT + '/changePin', {
-				pin: pin,
-				action: pinValue
-			}, function(data) {
-
-				// alert(action);
+						if (value.state) {
+							pin.addClass('pin-toggle-on');
+							pin.text('on');
+						}
+						else {
+							pin.removeClass('pin-toggle-on');
+							pin.text('off');
+						}
+					});
+				}
 			});
 
 		return false;

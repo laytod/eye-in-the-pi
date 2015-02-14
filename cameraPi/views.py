@@ -1,33 +1,33 @@
+import json
+import requests
 import datetime
 
-from flask import url_for, render_template, jsonify, request, redirect
-from cameraPi import app, login_manager, logger
-
-# give alias to logger
-# logger = app.logger
-
-from flask.ext.login import current_user, login_required, login_user, logout_user
-from forms import LoginForm
 from models import User
-
+from forms import LoginForm
 from emails import send_alert
+from cameraPi import app, login_manager, logger
+from cameraPi.paths import TOGGLE_PATH, STATUS_PATH
 
+from flask import url_for, render_template, jsonify, request, redirect
+from flask.ext.login import current_user, login_required, login_user, logout_user
 
-pins = {}
 
 
 @login_manager.user_loader
 def load_user(userID):
    return User.get(int(userID))
 
+
 @login_manager.unauthorized_handler
 def unauthorized():
    return redirect(url_for('login', next=request.path))
+
 
 @app.route('/test')
 def test():
    logger.info(current_user.username)
    return str(current_user.is_authenticated())
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -40,63 +40,52 @@ def login():
 
    return render_template('login.html', form=form)
 
+
 @app.route('/logout')
 def logout():
    logger.info("Logging out {user}".format(user=current_user.username))
    logout_user()
    return redirect(url_for('index'))
 
+
 @app.route("/")
 @login_required
 def index():
-   # Put the pin dictionary into the template data dictionary:
+   status = get_status()
+
    templateData = {
-      'pins' : pins
+      'pins' : status
       }
-   # Pass the template data into the template main.html and return it to the user
+
    return render_template('main.html', **templateData)
 
-@app.route('/get_content')
+
+@app.route("/toggle_pin", methods=['POST'])
 @login_required
-def get_content():
-
-   buttonID = request.args.get('id', 'Button ID not found.')
-
-   if buttonID == 'button1':
-      templateData = {
-         'pins' : pins
-      }
-      content = render_template('default.html', **templateData)
-      f = open('test.out', 'w')
-      f.write(content)
-      f.close
-   elif buttonID == 'button2':
-      content = 'You clicked on button 2.  Good for you!'
-   elif buttonID == 'button3':
-      content = "This is the content area for button 3.  Isn't it spiffy?"
-   else:
-      content = buttonID
-
-   return jsonify(result=content)
-
-
-# The function below is executed when someone requests a URL with the pin number and action in it:
-@app.route("/changePin")
-@login_required
-def action():
-   action = request.args.get('action', None)
-   pin = request.args.get('pin', None)
-   pin = int(pin)
+def toggle_pin():
+   pin = request.form['pin']
 
    try:
-      result = True
-   except:
-      result = False
+      r = requests.get(TOGGLE_PATH + '/{pin}'.format(
+         pin=pin
+      ))
 
-   logger.info('Turned pin {pin} {action}'.format(
-         pin=pin,
-         action=action))
-   return jsonify(result=result)
+      status = json.loads(r.content)
+
+      if r.status_code == 200:
+         logger.info('Toggled pin {pin}'.format(
+               pin=pin
+         ))
+      else:
+         logger.info('Toggling pin {pin} failed.'.format(
+            pin=pin
+         ))
+
+      return jsonify(status)
+
+   except Exception as e:
+      logger.exception(e)
+      return jsonify(dict(response=False))
 
 
 @app.route("/mail")
@@ -108,3 +97,15 @@ def send_mail():
 
 
 
+def get_status():
+   try:
+      r = requests.get(STATUS_PATH)
+      status = json.loads(r.content)
+      if r.status_code == 200:
+         return status
+      else:
+         return False
+
+   except Exception as e:
+      logger.exception(e)
+      raise
