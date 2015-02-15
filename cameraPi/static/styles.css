@@ -62,7 +62,7 @@
 	margin: 75px;
 }
 
-.pin-toggle {
+.toggle {
 	padding: 5px;
 	width: 20px;
 	background-color: red;
@@ -72,7 +72,7 @@
 	border-top-right-radius: .5em;
 }
 
-.pin-toggle-on {
+.toggle-on {
 	background-color: green;
 }
 

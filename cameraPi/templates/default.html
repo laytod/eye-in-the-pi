@@ -7,20 +7,34 @@
 		<td>
 			<center>
 				{% if pins[pin].state == true %}
-					<div class='pin-toggle pin-toggle-on' id="{{pin}}">on</div>
+					<div class='pin toggle toggle-on' id="{{pin}}">on</div>
 				{% else %}
-					<div class='pin-toggle' id="{{pin}}">off</div>
+					<div class='pin toggle' id="{{pin}}">off</div>
 				{% endif %}
 			</center>
 		</td>
 	</tr>
 {% endfor %}
+	<tr>
+		<td>
+			The camera is currently
+		</td>
+		<td>
+			<center>
+				{% if cam_state == true %}
+					<div class='cam toggle toggle-on' id='cam'>on</div>
+				{% else %}
+					<div class='cam toggle' id='cam'>off</div>
+				{% endif %}
+			</center>
+		</td>
+	</tr>
 </table>
 
 
 <script type=text/javascript>
 	$(function() {
-		$('div.pin-toggle').bind('click', function() {
+		$('div.pin').bind('click', function() {
 			var pin = $(this).attr('id');
 
 			$.ajax({
@@ -34,21 +48,49 @@
 				},
 				success: function(response) {
 					$.each(response, function (index, value) {
-						pin = $('#' + index + '.pin-toggle');
+						pin = $('#' + index + '.toggle');
 
 						if (value.state) {
-							pin.addClass('pin-toggle-on');
+							pin.addClass('toggle-on');
 							pin.text('on');
 						}
 						else {
-							pin.removeClass('pin-toggle-on');
+							pin.removeClass('toggle-on');
 							pin.text('off');
 						}
 					});
 				}
 			});
 
-		return false;
+			return false;
+		});
+	});
+
+	$(function () {
+		$('div.cam').bind('click', function () {
+			$.ajax({
+				type:'GET',
+				url: $SCRIPT_ROOT + 'toggle_video',
+				error: function(response, a, b) {
+					console.log(response);
+				},
+				success: function(response) {
+					processState = response.info.state;
+					button = $('#cam');
+
+					if (processState === 0) {
+						button.removeClass('toggle-on');
+						button.text('off');
+					} else {
+						button.addClass('toggle-on');
+						button.text('on');
+					}
+
+					$('#camera-stream').attr('src', 'http://localhost:8080/?action=stream')
+				}
+			});
+
+			return false;
 		});
 	});
 </script>
