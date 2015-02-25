@@ -12,6 +12,11 @@ from flask import url_for, render_template, jsonify, request, redirect
 from flask.ext.login import current_user, login_required, login_user, logout_user
 
 
+pins = { 17 : {'name': 'green'},
+         22 : {'name': 'yellow'},
+         23 : {'name': 'red'}
+}
+
 
 @login_manager.user_loader
 def load_user(userID):
@@ -23,10 +28,10 @@ def unauthorized():
    return redirect(url_for('login', next=request.path))
 
 
-@app.route('/test')
-def test():
-   logger.info(current_user.username)
-   return str(current_user.is_authenticated())
+# @app.route('/test')
+# def test():
+#    logger.info(current_user.username)
+#    return str(current_user.is_authenticated())
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -51,15 +56,28 @@ def logout():
 @app.route("/")
 @login_required
 def index():
-   pin_status = get_status()
+   try:
+      pin_status = get_status()
 
-   cam_status = get_process_info('cam')
-   mjpg_status = get_process_info('mjpg')
+      cam_status = get_process_info('cam')
+      mjpg_status = get_process_info('mjpg')
 
-   if cam_status['state'] > 0 and mjpg_status > 0:
-      cam_state = True
-   else:
+      if cam_status['state'] > 0 and mjpg_status > 0:
+         cam_state = True
+      else:
+         cam_state = False
+
+
+   except Exception as e:
+      logger.exception(e)
       cam_state = False
+      pin_status = dict()
+
+      for pin in pins:
+         pins[pin]['state'] = 0
+
+
+
 
    templateData = {
       'cam_state': cam_state,
@@ -67,7 +85,6 @@ def index():
       }
 
    return render_template('main.html', **templateData)
-
 
 @app.route("/toggle_pin", methods=['POST'])
 @login_required
@@ -155,3 +172,4 @@ def get_status():
    except Exception as e:
       logger.exception(e)
       raise
+

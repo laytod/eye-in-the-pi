@@ -33,64 +33,112 @@
 
 
 <script type=text/javascript>
-	$(function() {
-		$('div.pin').bind('click', function() {
-			var pin = $(this).attr('id');
 
-			$.ajax({
-				type: 'POST',
-				url: $SCRIPT_ROOT + 'toggle_pin',
-				data: {
-					pin: pin,
-				},
-				error: function(response) {
-					console.log(response);
-				},
-				success: function(response) {
-					$.each(response, function (index, value) {
-						pin = $('#' + index + '.toggle');
 
-						if (value.state) {
-							pin.addClass('toggle-on');
-							pin.text('on');
-						}
-						else {
-							pin.removeClass('toggle-on');
-							pin.text('off');
-						}
-					});
+	function togglePin() {
+		var pin = $(this).attr('id');
+		var button = $(this);
+
+		button.off('click', togglePin);
+
+		if (button.hasClass('toggle-on')) {
+			button.removeClass('toggle-on');
+			button.text('off');
+		} else {
+			button.addClass('toggle-on');
+			button.text('on');
+		}
+
+		$.ajax({
+			type: 'POST',
+			url: $SCRIPT_ROOT + 'toggle_pin',
+			data: {
+				pin: pin,
+			},
+			error: function(response) {
+				console.log(response);
+
+				if (button.hasClass('toggle-on')) {
+					button.removeClass('toggle-on');
+					button.text('off');
+				} else {
+					button.addClass('toggle-on');
+					button.text('on');
 				}
-			});
+			},
+			success: function(response) {
+				$.each(response, function (index, value) {
+					pin = $('#' + index + '.toggle');
 
-			return false;
-		});
-	});
-
-	$(function () {
-		$('div.cam').bind('click', function () {
-			$.ajax({
-				type:'GET',
-				url: $SCRIPT_ROOT + 'toggle_video',
-				error: function(response, a, b) {
-					console.log(response);
-				},
-				success: function(response) {
-					processState = response.info.state;
-					button = $('#cam');
-
-					if (processState === 0) {
-						button.removeClass('toggle-on');
-						button.text('off');
-					} else {
-						button.addClass('toggle-on');
-						button.text('on');
+					if (value.state) {
+						pin.addClass('toggle-on');
+						pin.text('on');
 					}
-
-					$('#camera-stream').attr('src', 'http://localhost:8080/?action=stream')
-				}
-			});
-
-			return false;
+					else {
+						pin.removeClass('toggle-on');
+						pin.text('off');
+					}
+				});
+			},
+			complete: function () {
+				button.on('click', togglePin);
+			}
 		});
+
+	}
+
+
+	function toggleButton(item, state) {
+		if (state === 0) {
+			item.removeClass('toggle-on');
+			item.text('off');
+		} else {
+			item.addClass('toggle-on');
+			item.text('on');
+		}
+	}
+
+	function toggleVideo() {
+		var button = $('div.cam');
+		button.off('click', toggleVideo);
+
+		if (button.hasClass('toggle-on')) {
+			button.removeClass('toggle-on');
+			button.text('off');
+		} else {
+			button.addClass('toggle-on');
+			button.text('on');
+		}
+
+		$.ajax({
+			type:'GET',
+			url: $SCRIPT_ROOT + 'toggle_video',
+			error: function(response) {
+				console.log(response);
+			},
+			success: function(response) {
+				processState = response.info.state;
+
+				if (processState === 0) {
+					button.removeClass('toggle-on');
+					button.text('off');
+				} else {
+					button.addClass('toggle-on');
+					button.text('on');
+				}
+
+				$('#camera-stream').attr('src', 'http://localhost:8080/?action=stream');
+			},
+			complete: function () {
+				$('div.cam').on('click', toggleVideo);
+			}
+		});
+	}
+
+
+	$(document).ready(function () {
+		$('div.pin').on('click', togglePin);
+		$('div.cam').on('click', toggleVideo);
 	});
+
 </script>
