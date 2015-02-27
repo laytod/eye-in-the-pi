@@ -5,12 +5,14 @@ import datetime
 from models import User
 from forms import LoginForm
 from emails import send_alert
-from cameraPi import app, login_manager, logger
-from cameraPi.paths import TOGGLE_PIN_PATH, STATUS_PATH, TOGGLE_CAM_PATH, PROCESS_INFO_PATH
+from cameraPi import app, login_manager
+from paths import TOGGLE_PIN_PATH, STATUS_PATH, TOGGLE_CAM_PATH, PROCESS_INFO_PATH
 
 from flask import url_for, render_template, jsonify, request, redirect
 from flask.ext.login import current_user, login_required, login_user, logout_user
 
+import logging
+logger = logging.getLogger('cameraPi')
 
 pins = { 17 : {'name': 'green'},
          22 : {'name': 'yellow'},

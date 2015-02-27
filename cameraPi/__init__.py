@@ -25,18 +25,17 @@ app.secret_key = 'super secret key'
 # maxBytes, and then will start a new log file and make a backup
 # of the full log file.  A total of backupCount backup files
 # will be made
-logger = logging.getLogger('cameraPi')
-logger.setLevel(logging.DEBUG)
-handler = RotatingFileHandler('/home/laytod/flask/server/logs/server.log',
-								maxBytes=10000,
-								backupCount=1)
-formatter = logging.Formatter('[%(asctime)s] [%(levelname)s] %(message)s',
-								datefmt='%Y-%m-%d %H:%M:%S')
-handler.setFormatter(formatter)
-logger.addHandler(handler)
+# logger = logging.getLogger('cameraPi')
+# logger.setLevel(logging.DEBUG)
+# handler = RotatingFileHandler('/home/laytod/flask/server/logs/server.log',
+# 								maxBytes=10000,
+# 								backupCount=1)
+# formatter = logging.Formatter('[%(asctime)s] [%(levelname)s] %(message)s',
+# 								datefmt='%Y-%m-%d %H:%M:%S')
+# handler.setFormatter(formatter)
+# logger.addHandler(handler)
 
-
-import cameraPi.views
+from views import *
 
 
 if __name__ == "__main__":

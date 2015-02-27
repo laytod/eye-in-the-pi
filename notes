@@ -41,3 +41,10 @@ SSH TUNNEL
 # Make sure to copy the ssh key of the pi over to the server and vice versa
 #
 autossh -M 20000 -f -N camserv -R 8080:localhost:8080 -R 8022:localhost:22
+
+
+--------------------------------------------------
+MOD_WSGI
+--------------------------------------------------
+cd /var/www
+sudo SSH_AUTH_SOCK=$SSH_AUTH_SOCK git clone git@github.com:laytod/eye-in-the-pi.git camserv

@@ -1,7 +1,7 @@
 import smtplib
 import logging
 
-from cameraPi import logger
+logger = logging.getLogger('cameraPi')
 
 # email credentials
 username = 'hogtrapalert@gmail.com'
