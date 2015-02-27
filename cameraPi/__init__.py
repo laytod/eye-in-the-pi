@@ -37,3 +37,7 @@ logger.addHandler(handler)
 
 
 import cameraPi.views
+
+
+if __name__ == "__main__":
+	app.run()

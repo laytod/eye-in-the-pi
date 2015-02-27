@@ -1,3 +1,32 @@
+sudo apt-get install ipython
+sudo apt-get install git
+sudo apt-get install vim
+sudo apt-get install htop
+
+sudo apt-get install python-dev
+sudo apt-get install libmysqlclient-dev
+sudo apt-get install python-pip
+
+sudo apt-get install apache2
+apt-get install libapache2-mod-wsgi
+sudo a2enmod wsgi
+
+
+sudo apt-get install mysql-server
+sudo apt-get install openssh-server
+
+# setup logs for server
+mkdir /home/laytod/flask/server/logs/
+touch /home/laytod/flask/server/logs/server.log
+
+
+--------------------------------------------------
+VIRTUALENV
+--------------------------------------------------
+# http://roundhere.net/journal/virtualenv-ubuntu-12-10/
+pip install virtualenv
+pip install virtualenvwrapper
+
 --------------------------------------------------
 SSH TUNNEL
 --------------------------------------------------
@@ -8,5 +37,7 @@ SSH TUNNEL
 # -M sets the port for ssh to monitor ssh tunnels
 # -N no commands will be executed from the shell over
 #    the ssh tunnel
+#
+# Make sure to copy the ssh key of the pi over to the server and vice versa
 #
 autossh -M 20000 -f -N camserv -R 8080:localhost:8080 -R 8022:localhost:22

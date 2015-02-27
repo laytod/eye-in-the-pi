@@ -21,6 +21,10 @@ if __name__ == '__main__':
 		password = sys.argv[2]
 		
 		pwHash = generate_password_hash(password)
+
+		if not User.tableExists():
+			User.createTable()
+
 		User(username=name, pwHash=pwHash)
 
 		print "User '{name}' successfully created.".format(name=name)
