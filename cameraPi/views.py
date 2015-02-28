@@ -11,9 +11,6 @@ from paths import TOGGLE_PIN_PATH, STATUS_PATH, TOGGLE_CAM_PATH, PROCESS_INFO_PA
 from flask import url_for, render_template, jsonify, request, redirect
 from flask.ext.login import current_user, login_required, login_user, logout_user
 
-import logging
-logger = logging.getLogger('cameraPi')
-
 pins = { 17 : {'name': 'green'},
          22 : {'name': 'yellow'},
          23 : {'name': 'red'}
@@ -32,7 +29,7 @@ def unauthorized():
 
 # @app.route('/test')
 # def test():
-#    logger.info(current_user.username)
+#    app.logger.info(current_user.username)
 #    return str(current_user.is_authenticated())
 
 
@@ -42,7 +39,7 @@ def login():
 
    if form.validate_on_submit():
       login_user(User.selectBy(username=form.user.data).getOne(), remember=form.rememberMe.data)
-      logger.info('Logged in {user}'.format(user=current_user.username))
+      app.logger.info('Logged in {user}'.format(user=current_user.username))
       return redirect(request.args.get('next') or url_for('index'))
 
    return render_template('login.html', form=form)
@@ -50,7 +47,7 @@ def login():
 
 @app.route('/logout')
 def logout():
-   logger.info("Logging out {user}".format(user=current_user.username))
+   app.logger.info("Logging out {user}".format(user=current_user.username))
    logout_user()
    return redirect(url_for('index'))
 
@@ -71,7 +68,7 @@ def index():
 
 
    except Exception as e:
-      logger.exception(e)
+      app.logger.exception(e)
       cam_state = False
       pin_status = dict()
 
@@ -100,19 +97,19 @@ def toggle_pin():
 
 
       if r.status_code == 200:
-         logger.info('Toggled pin {pin}'.format(
+         app.logger.info('Toggled pin {pin}'.format(
                pin=pin
          ))
          status = json.loads(r.content)
          return jsonify(status)
       else:
-         logger.info('Toggling pin {pin} failed.'.format(
+         app.logger.info('Toggling pin {pin} failed.'.format(
             pin=pin
          ))
          return render_template('error.html'), 500
 
    except Exception as e:
-      logger.exception(e)
+      app.logger.exception(e)
       return render_template('error.html'), 500
 
 @app.route('/toggle_video')
@@ -122,17 +119,17 @@ def toggle_video():
       r = requests.get(TOGGLE_CAM_PATH)
 
       if r.status_code == 200:
-         logger.info('Toggled camera')
+         app.logger.info('Toggled camera')
          return_val = json.loads(r.content)
-         logger.info(return_val)
-         logger.info('--')
+         app.logger.info(return_val)
+         app.logger.info('--')
          return jsonify(return_val)
       else:
-         logger.info('Toggling camera failed.')
+         app.logger.info('Toggling camera failed.')
          return render_template('error.html'), 500
 
    except Exception as e:
-      logger.exception(e)
+      app.logger.exception(e)
       return render_template('error.html'), 500
 
 
@@ -158,7 +155,7 @@ def get_process_info(name='all'):
          return False
 
    except Exception as e:
-      logger.exception(e)
+      app.logger.exception(e)
       raise
 
 
@@ -172,6 +169,6 @@ def get_status():
          return False
 
    except Exception as e:
-      logger.exception(e)
+      app.logger.exception(e)
       raise
 
