@@ -1,11 +1,11 @@
 import smtplib
 import logging
-from cameraPi import app
+from cameraPi import app, config
 
 
 # email credentials
-username = 'hogtrapalert@gmail.com'
-password = 'questh0gtrap'
+username = config.get('email', 'user')
+password = config.get('email', 'pw')
 
 def send_email( subject='No Subject',
                 sender=username,
