@@ -13,6 +13,8 @@ config = ConfigParser.ConfigParser()
 config_path = path.dirname(path.dirname(path.realpath(__file__))) + '/camserv.conf'
 config.read(config_path)
 
+app.api_key = config.get('api', 'key')
+
 # create database connection
 sqlhub.processConnection = connectionForURI('{adapter}://{user}:{pw}@{host}/{db}'.format(
 	adapter=config.get('db', 'adapter'),
@@ -48,4 +50,8 @@ handler.setFormatter(formatter)
 app.logger.addHandler(handler)
 
 
+api_key = config.get('api', 'key')
+
 from cameraPi.views import *
+
+

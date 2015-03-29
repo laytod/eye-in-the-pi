@@ -1,7 +1,14 @@
 #!/home/laytod/.virtualenvs/hogtrap/bin/python
 import sys
+import ConfigParser
 from sqlobject import *
 from werkzeug.security import generate_password_hash, check_password_hash
+
+
+# parse the config
+config = ConfigParser.ConfigParser()
+config_path = path.dirname(path.dirname(path.realpath(__file__))) + '/camserv.conf'
+config.read(config_path)
 
 
 class User(SQLObject):
@@ -16,7 +23,13 @@ if __name__ == '__main__':
 		sys.exit(2)
 
 	try:
-		sqlhub.processConnection = connectionForURI('mysql://root:root@localhost/flask')
+		sqlhub.processConnection = connectionForURI('{adapter}://{user}:{pw}@{host}/{db}'.format(
+			adapter=config.get('db', 'adapter'),
+			user=config.get('db', 'user'),
+			pw=config.get('db', 'pw'),
+			host=config.get('db', 'host'),
+			db=config.get('db', 'db')
+		))
 		name = sys.argv[1]
 		password = sys.argv[2]
 		
