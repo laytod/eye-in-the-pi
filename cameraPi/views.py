@@ -88,10 +88,11 @@ def toggle_pin():
     pin = request.form['pin']
 
     try:
+        headers = {'api-key': app.api_key}
         r = requests.get(TOGGLE_PIN_PATH + '/{pin}'.format(
-            pin=pin
-        ))
-        r.headers['api_key'] = app.api_key
+            pin=pin),
+            headers=headers
+        )
 
         if r.status_code == 200:
             app.logger.info('Toggled pin {pin}'.format(
@@ -117,8 +118,8 @@ def toggle_video():
     # if not authenticate
 
     try:
-        r = requests.get(TOGGLE_CAM_PATH)
-        r.headers['api_key'] = app.api_key
+        headers = {'api-key': app.api_key}
+        r = requests.get(TOGGLE_CAM_PATH, headers=headers)
 
         if r.status_code == 200:
             app.logger.info('Toggled camera')
@@ -149,8 +150,8 @@ def get_cam_status():
 
 def get_process_info(name='all'):
     try:
-        r = requests.get(PROCESS_INFO_PATH + '/' + name)
-        r.headers['api_key'] = app.api_key
+        headers = {'api-key': app.api_key}
+        r = requests.get(PROCESS_INFO_PATH + '/' + name, headers=headers)
         info = json.loads(r.content)
         if r.status_code == 200:
             return info
@@ -164,7 +165,8 @@ def get_process_info(name='all'):
 
 def get_status():
     try:
-        r = requests.get(STATUS_PATH)
+        headers = {'api-key': app.api_key}
+        r = requests.get(STATUS_PATH, headers=headers)
         r.headers['api_key'] = app.api_key
         status = json.loads(r.content)
         if r.status_code == 200:
