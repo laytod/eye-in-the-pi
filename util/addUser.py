@@ -12,36 +12,36 @@ config.read(config_path)
 
 
 class User(SQLObject):
-	username = StringCol()
-	pwHash = StringCol()
+    username = StringCol()
+    pwHash = StringCol()
 
 
 if __name__ == '__main__':
-	if len(sys.argv) < 3:
-		print "usage: ./addUser <username> <pw>"
-		print '...is the virtualenv enabled?'
-		sys.exit(2)
+    if len(sys.argv) < 3:
+        print "usage: ./addUser <username> <pw>"
+        print '...is the virtualenv enabled?'
+        sys.exit(2)
 
-	try:
-		sqlhub.processConnection = connectionForURI('{adapter}://{user}:{pw}@{host}/{db}'.format(
-			adapter=config.get('db', 'adapter'),
-			user=config.get('db', 'user'),
-			pw=config.get('db', 'pw'),
-			host=config.get('db', 'host'),
-			db=config.get('db', 'db')
-		))
-		name = sys.argv[1]
-		password = sys.argv[2]
-		
-		pwHash = generate_password_hash(password)
+    try:
+        sqlhub.processConnection = connectionForURI('{adapter}://{user}:{pw}@{host}/{db}'.format(
+            adapter=config.get('db', 'adapter'),
+            user=config.get('db', 'user'),
+            pw=config.get('db', 'pw'),
+            host=config.get('db', 'host'),
+            db=config.get('db', 'db')
+        ))
+        name = sys.argv[1]
+        password = sys.argv[2]
 
-		if not User.tableExists():
-			User.createTable()
+        pwHash = generate_password_hash(password)
 
-		User(username=name, pwHash=pwHash)
+        if not User.tableExists():
+            User.createTable()
 
-		print "User '{name}' successfully created.".format(name=name)
+        User(username=name, pwHash=pwHash)
 
-	except Exception as e:
-		print "Error adding user '{name}': {e}".format(name=name, e=e)
-		sys.exit(2)
+        print "User '{name}' successfully created.".format(name=name)
+
+    except Exception as e:
+        print "Error adding user '{name}': {e}".format(name=name, e=e)
+        sys.exit(2)

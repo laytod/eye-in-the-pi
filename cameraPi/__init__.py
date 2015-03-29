@@ -2,6 +2,7 @@ import logging
 import ConfigParser
 from os import path
 from sqlobject import *
+from hashlib import sha1
 from flask.ext.login import LoginManager
 from logging.handlers import RotatingFileHandler
 
@@ -13,15 +14,15 @@ config = ConfigParser.ConfigParser()
 config_path = path.dirname(path.dirname(path.realpath(__file__))) + '/camserv.conf'
 config.read(config_path)
 
-app.api_key = config.get('api', 'key')
+app.api_key = sha1(config.get('api', 'key')).hexdigest()
 
 # create database connection
 sqlhub.processConnection = connectionForURI('{adapter}://{user}:{pw}@{host}/{db}'.format(
-	adapter=config.get('db', 'adapter'),
-	user=config.get('db', 'user'),
-	pw=config.get('db', 'pw'),
-	host=config.get('db', 'host'),
-	db=config.get('db', 'db')
+    adapter=config.get('db', 'adapter'),
+    user=config.get('db', 'user'),
+    pw=config.get('db', 'pw'),
+    host=config.get('db', 'host'),
+    db=config.get('db', 'db')
 ))
 
 # create LoginManager for Flask-Login
@@ -41,11 +42,15 @@ app.secret_key = 'super secret key'
 # of the full log file.  A total of backupCount backup files
 # will be made
 app.logger.setLevel(logging.DEBUG)
-handler = RotatingFileHandler(config.get('logs', 'main'),
- 								maxBytes=10000,
- 								backupCount=1)
-formatter = logging.Formatter('[%(asctime)s] [%(levelname)s] %(message)s',
- 								datefmt='%Y-%m-%d %H:%M:%S')
+handler = RotatingFileHandler(
+    config.get('logs', 'main'),
+    maxBytes=10000,
+    backupCount=1
+)
+formatter = logging.Formatter(
+    '[%(asctime)s] [%(levelname)s] %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
 handler.setFormatter(formatter)
 app.logger.addHandler(handler)
 
@@ -53,5 +58,3 @@ app.logger.addHandler(handler)
 api_key = config.get('api', 'key')
 
 from cameraPi.views import *
-
-
