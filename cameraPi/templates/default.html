@@ -29,6 +29,16 @@
 			</center>
 		</td>
 	</tr>
+	<tr>
+		<td>
+			PIR
+		</td>
+		<td>
+			<center>
+				<div class='pir' id='pir'>turn on</div>
+			</center>
+		</td>
+	</tr>
 </table>
 
 
@@ -136,9 +146,30 @@
 	}
 
 
+	function toggleMotion() {
+		var button = $('div.pir');
+		button.off('click', toggleMotion);
+
+		$.ajax({
+			type:'GET',
+			url: $SCRIPT_ROOT + 'toggle_motion',
+			error: function(response) {
+				console.log(response);
+			},
+			success: function(response) {
+				console.log(response);
+			},
+			complete: function () {
+				$('div.pir').on('click', toggleVideo);
+			}
+		});
+	}
+
+
 	$(document).ready(function () {
 		$('div.pin').on('click', togglePin);
 		$('div.cam').on('click', toggleVideo);
+		$('div.pir').on('click', toggleMotion);
 	});
 
 </script>

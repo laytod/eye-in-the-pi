@@ -5,9 +5,9 @@ from models import User
 from forms import LoginForm
 from emails import send_alert
 from cameraPi import app, login_manager
-from paths import TOGGLE_PIN_PATH, STATUS_PATH, TOGGLE_CAM_PATH, PROCESS_INFO_PATH
+from paths import TOGGLE_PIN_PATH, STATUS_PATH, TOGGLE_CAM_PATH, PROCESS_INFO_PATH, TOGGLE_MOTION_PATH
 
-from flask import url_for, render_template, jsonify, request, redirect
+from flask import url_for, render_template, jsonify, request, redirect, abort
 from flask.ext.login import current_user, login_required, login_user, logout_user
 
 pins = {
@@ -124,8 +124,6 @@ def toggle_video():
         if r.status_code == 200:
             app.logger.info('Toggled camera')
             return_val = json.loads(r.content)
-            app.logger.info(return_val)
-            app.logger.info('--')
             return jsonify(return_val)
         else:
             app.logger.info('Toggling camera failed.')
@@ -134,6 +132,26 @@ def toggle_video():
     except Exception as e:
         app.logger.exception(e)
         return render_template('error.html'), 500
+
+
+@app.route('/toggle_motion')
+@login_required
+def toggle_motion():
+    try:
+        headers = {'api-key': app.api_key}
+        r = requests.get(TOGGLE_MOTION_PATH, headers=headers)
+
+        if r.status_code == 200:
+            app.logger.info('turned on motion detection')
+            return_val = json.loads(r.content)
+            return jsonify(return_val)
+        else:
+            app.logger.info('failed attempting to turn on motion detection')
+            abort(500)
+
+    except Exception as e:
+        app.logger.exception(e)
+        abort(500)
 
 
 @app.route("/mail")
