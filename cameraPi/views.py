@@ -58,13 +58,25 @@ def index():
     try:
         pin_status = get_status()
 
-        cam_status = get_process_info('cam')
-        mjpg_status = get_process_info('mjpg')
+        supervisor_info = get_process_info()
+
+        for process in supervisor_info:
+            if process['name'] == 'cam':
+                cam_status = process
+            elif process['name'] == 'mjpg':
+                mjpg_status = process
+            elif process['name'] == 'pir':
+                pir_status = process
 
         if cam_status['state'] > 0 and mjpg_status > 0:
             cam_state = True
         else:
             cam_state = False
+
+        if pir_status['state'] > 0:
+            pir_state = True
+        else:
+            pir_state = False
 
     except Exception as e:
         app.logger.exception(e)
@@ -76,6 +88,7 @@ def index():
 
     templateData = {
         'cam_state': cam_state,
+        'pir_state': pir_state,
         'pins': pin_status
         }
 

@@ -35,7 +35,12 @@
 		</td>
 		<td>
 			<center>
-				<div class='pir' id='pir'>turn on</div>
+				{% if pir_state == true %}
+					<div class='pir toggle toggle-on' id='pir'>
+				{% else %}
+					<div class='pir toggle' id='pir'>
+				{% endif %}
+				turn on</div>
 			</center>
 		</td>
 	</tr>
@@ -150,6 +155,14 @@
 		var button = $('div.pir');
 		button.off('click', toggleMotion);
 
+		if (button.hasClass('toggle-on')) {
+			button.removeClass('toggle-on');
+			button.text('off');
+		} else {
+			button.addClass('toggle-on');
+			button.text('on');
+		}
+
 		$.ajax({
 			type:'GET',
 			url: $SCRIPT_ROOT + 'toggle_motion',
@@ -157,10 +170,18 @@
 				console.log(response);
 			},
 			success: function(response) {
-				console.log(response);
+				processState = response.info.state;
+
+				if (processState === 0) {
+					button.removeClass('toggle-on');
+					button.text('off');
+				} else {
+					button.addClass('toggle-on');
+					button.text('on');
+				}
 			},
 			complete: function () {
-				$('div.pir').on('click', toggleVideo);
+				$('div.pir').on('click', toggleMotion);
 			}
 		});
 	}
