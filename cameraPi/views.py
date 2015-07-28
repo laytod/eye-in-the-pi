@@ -14,11 +14,7 @@ import logging
 from logging.handlers import RotatingFileHandler
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
-handler = RotatingFileHandler(
-    '/var/log/camserv/camserv.log',
-    maxBytes=10000,
-    backupCount=1
-)
+handler = logging.FileHandler('/var/log/camserv/camserv.log')
 formatter = logging.Formatter(
     '[%(asctime)s] [%(levelname)s] %(message)s',
     datefmt='%Y-%m-%d %H:%M:%S'
