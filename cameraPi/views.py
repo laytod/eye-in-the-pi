@@ -11,11 +11,21 @@ from flask import url_for, render_template, jsonify, request, redirect, abort
 from flask.ext.login import current_user, login_required, login_user, logout_user
 
 import logging
+from logging.handlers import RotatingFileHandler
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
-fh = logging.FileHandler('/var/log/camserv/test.log')
-fh.setLevel(logging.DEBUG)
-logger.addHandler(fh)
+handler = RotatingFileHandler(
+    '/var/log/camserv/camserv.log',
+    maxBytes=10000,
+    backupCount=1
+)
+formatter = logging.Formatter(
+    '[%(asctime)s] [%(levelname)s] %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
+handler.setLevel(logging.DEBUG)
+handler.setFormatter(formatter)
+logger.addHandler(handler)
 
 pins = {
     17: {'name': 'green'},
