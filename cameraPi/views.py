@@ -11,7 +11,6 @@ from flask import url_for, render_template, jsonify, request, redirect, abort
 from flask.ext.login import current_user, login_required, login_user, logout_user
 
 import logging
-from logging.handlers import RotatingFileHandler
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 handler = logging.FileHandler('/var/log/camserv/camserv.log')
