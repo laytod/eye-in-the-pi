@@ -141,8 +141,8 @@
 					button.addClass('toggle-on');
 					button.text('on');
 				}
-
-				$('#camera-stream').attr('src', 'http://localhost:8080/?action=stream');
+				
+				$('#camera-stream').attr('src','http://104.236.114.229:8080/?action=stream')
 			},
 			complete: function () {
 				$('div.cam').on('click', toggleVideo);
