@@ -132,7 +132,7 @@
 				console.log(response);
 			},
 			beforeSend: function () {
-				$('#camera-stream').attr('src','http://104.236.114.229/static/img/724.gif')
+				$('#camera-stream').attr('src','http://104.236.114.229/static/img/spinny.gif');
 			},
 
 			success: function(response) {
@@ -141,12 +141,13 @@
 				if (processState === 0) {
 					button.removeClass('toggle-on');
 					button.text('off');
+					$('#camera-stream').attr('src','http://104.236.114.229/static/img/off.gif');
 				} else {
 					button.addClass('toggle-on');
 					button.text('on');
+					$('#camera-stream').attr('src','http://104.236.114.229:8080/?action=stream');
 				}
 
-				$('#camera-stream').attr('src','http://104.236.114.229:8080/?action=stream')
 			},
 			complete: function () {
 				$('div.cam').on('click', toggleVideo);
