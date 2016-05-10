@@ -89,6 +89,14 @@ def index():
             pir_state = True
         else:
             pir_state = False
+    except requests.exceptions.ConnectionError as e:
+        logger.exception(e)
+        cam_state = False
+        pin_status = dict()
+        pir_state = dict()
+
+        for pin in pins:
+            pins[pin]['state'] = 0
 
     except Exception as e:
         logger.exception(e)
@@ -192,31 +200,21 @@ def get_cam_status():
 
 
 def get_process_info(name='all'):
-    try:
-        headers = {'api-key': app.api_key}
-        r = requests.get(PROCESS_INFO_PATH + '/' + name, headers=headers)
-        info = json.loads(r.content)
-        if r.status_code == 200:
-            return info
-        else:
-            return False
-
-    except Exception as e:
-        logger.exception(e)
-        raise
+    headers = {'api-key': app.api_key}
+    r = requests.get(PROCESS_INFO_PATH + '/' + name, headers=headers)
+    info = json.loads(r.content)
+    if r.status_code == 200:
+        return info
+    else:
+        return False
 
 
 def get_status():
-    try:
-        headers = {'api-key': app.api_key}
-        r = requests.get(STATUS_PATH, headers=headers)
-        r.headers['api_key'] = app.api_key
-        status = json.loads(r.content)
-        if r.status_code == 200:
-            return status
-        else:
-            return False
-
-    except Exception as e:
-        logger.exception(e)
-        raise
+    headers = {'api-key': app.api_key}
+    r = requests.get(STATUS_PATH, headers=headers)
+    r.headers['api_key'] = app.api_key
+    status = json.loads(r.content)
+    if r.status_code == 200:
+        return status
+    else:
+        return False

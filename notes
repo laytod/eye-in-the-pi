@@ -20,6 +20,9 @@ mkdir /home/laytod/flask/server/logs/
 touch /home/laytod/flask/server/logs/server.log
 
 
+pip install sqlobject
+pip install mysql-python
+
 --------------------------------------------------
 VIRTUALENV
 --------------------------------------------------

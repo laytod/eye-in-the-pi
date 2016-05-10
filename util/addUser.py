@@ -1,5 +1,6 @@
-#!/home/laytod/.virtualenvs/hogtrap/bin/python
+#!/usr/bin/python
 import sys
+from os import path
 import ConfigParser
 from sqlobject import *
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -23,6 +24,8 @@ if __name__ == '__main__':
         sys.exit(2)
 
     try:
+        name = sys.argv[1]
+        password = sys.argv[2]
         sqlhub.processConnection = connectionForURI('{adapter}://{user}:{pw}@{host}/{db}'.format(
             adapter=config.get('db', 'adapter'),
             user=config.get('db', 'user'),
@@ -30,8 +33,6 @@ if __name__ == '__main__':
             host=config.get('db', 'host'),
             db=config.get('db', 'db')
         ))
-        name = sys.argv[1]
-        password = sys.argv[2]
 
         pwHash = generate_password_hash(password)
 
@@ -44,4 +45,4 @@ if __name__ == '__main__':
 
     except Exception as e:
         print "Error adding user '{name}': {e}".format(name=name, e=e)
-        sys.exit(2)
+        raise
