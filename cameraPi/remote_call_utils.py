@@ -3,7 +3,7 @@ import requests
 
 from cameraPi import app
 from exceptions import RemoteCallFailed
-from paths import TOGGLE_PIN_PATH, STATUS_PATH, TOGGLE_CAM_PATH, PROCESS_INFO_PATH, TOGGLE_MOTION_PATH
+from paths import TOGGLE_PIN_PATH, STATUS_PATH, TOGGLE_CAM_PATH, TOGGLE_MOTION_PATH
 
 import logging
 logger = logging.getLogger(__name__)
@@ -18,56 +18,24 @@ handler.setFormatter(formatter)
 logger.addHandler(handler)
 
 
-def get_pin_status():
-    return remote_call('pins', 'status')
-
-
-def get_task_status():
-    task_status = remote_call('tasks', 'status')
-
-    for task in task_status:
-        if task['name'] == 'cam':
-            cam_status = task
-        elif task['name'] == 'mjpg':
-            mjpg_status = task
-        elif task['name'] == 'pir':
-            pir_status = task
-
-    if cam_status['state'] > 0 and mjpg_status > 0:
-        cam_state = True
-    else:
-        cam_state = False
-
-    if pir_status['state'] > 0:
-        pir_state = True
-    else:
-        pir_state = False
-
-    return {
-        'cam_state': cam_state,
-        'pir_state': pir_state,
-    }
-
-
-def remote_call(sensor_type='status', action='pin'):
+def remote_call(sensor_type='pin', action='status', pin_id=None):
     """ Valid argument values:
         sensor_type  ['pins', 'tasks']
         action       ['pin', 'cam', 'pir']
     """
-    if action == 'status':
-        if sensor_type == 'pins':
-            path = STATUS_PATH
-        else:
-            # sensor_type == 'tasks'
-            path = PROCESS_INFO_PATH
-    else:
+    if action == 'toggle':
         if sensor_type == 'pin':
-            path = TOGGLE_PIN_PATH
+            if not pin_id:
+                raise RemoteCallFailed('No pin_id given')
+
+            path = TOGGLE_PIN_PATH + str(pin_id)
         elif sensor_type == 'cam':
             path = TOGGLE_CAM_PATH
         else:
             # sensor_type == 'pir'
             path = TOGGLE_MOTION_PATH
+    else:
+        path = STATUS_PATH
 
     try:
         headers = {'api-key': app.api_key}

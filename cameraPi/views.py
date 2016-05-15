@@ -1,7 +1,5 @@
-from copy import deepcopy
-
 from cameraPi import app
-from remote_call_utils import get_task_status, get_pin_status, remote_call
+from remote_call_utils import remote_call
 
 from flask import render_template, jsonify, request
 from flask.ext.login import login_required
@@ -21,39 +19,36 @@ handler.setLevel(logging.DEBUG)
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
-pins = {
-    17: {'name': 'green'},
-    22: {'name': 'yellow'},
-    23: {'name': 'red'}
-}
-
 
 @app.route("/")
 @login_required
 def index():
-    try:
-        task_status = get_task_status()
+    templateData = {
+        'cam_state': False,
+        'pir_state': False,
+        'pins': dict(),
+    }
 
-        cam_state = task_status['cam_state']
-        pin_status = get_pin_status()
-        pir_state = task_status['pir_state']
+    try:
+        all_statuses = remote_call(action='status')
+
+        for status in all_statuses['result']:
+            if status['type'] == 'cam':
+                templateData['cam_state'] = status['state']
+            elif status['type'] == 'pir':
+                templateData['pir_state'] = status['state']
+            elif status['type'] == 'pin':
+                pin_id = status['data']['pin_id']
+                pin_name = status['data']['name']
+                pin_state = status['state']
+                templateData['pins'][pin_id] = {
+                    'name': pin_name,
+                    'state': pin_state,
+                }
 
     except Exception as e:
         logger.info('Getting status failed')
         logger.exception(e)
-        cam_state = False
-        pin_status = dict()
-        pir_state = dict()
-
-        for pin in pins:
-            pin_status[pin] = deepcopy(pins[pin])
-            pin_status[pin].update({'state': 0})
-
-    templateData = {
-        'cam_state': cam_state,
-        'pir_state': pir_state,
-        'pins': pin_status
-    }
 
     return render_template('main.html', **templateData)
 
@@ -63,7 +58,7 @@ def index():
 def toggle_pin():
     try:
         pin = request.form['pin']
-        status = remote_call('pin', 'toggle')
+        status = remote_call('pin', 'toggle', pin_id=pin)
         logger.info('Toggled pin {pin}'.format(
             pin=pin
         ))
