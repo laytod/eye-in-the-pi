@@ -32,7 +32,7 @@ def index():
     try:
         all_statuses = remote_call(action='status')
 
-        for status in all_statuses['result']:
+        for status in all_statuses['results']:
             if status['type'] == 'cam':
                 templateData['cam_state'] = status['state']
             elif status['type'] == 'pir':
