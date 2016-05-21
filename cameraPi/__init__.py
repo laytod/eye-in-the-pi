@@ -15,6 +15,7 @@ config_path = path.dirname(path.dirname(path.realpath(__file__))) + '/camserv.co
 config.read(config_path)
 
 app.api_key = sha1(config.get('api', 'key')).hexdigest()
+app.log_path = config.get('logs', 'main')
 
 # create database connection
 sqlhub.processConnection = connectionForURI('{adapter}://{user}:{pw}@{host}/{db}'.format(

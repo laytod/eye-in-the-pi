@@ -8,7 +8,7 @@ from paths import TOGGLE_PIN_PATH, STATUS_PATH, TOGGLE_CAM_PATH, TOGGLE_MOTION_P
 import logging
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
-handler = logging.FileHandler('/var/log/camserv/camserv.log')
+handler = logging.FileHandler(app.log_path)
 formatter = logging.Formatter(
     '[%(asctime)s] [%(levelname)s] %(message)s',
     datefmt='%Y-%m-%d %H:%M:%S'

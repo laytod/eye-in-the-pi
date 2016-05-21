@@ -9,7 +9,7 @@ from flask.ext.login import current_user, login_user, logout_user
 import logging
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
-handler = logging.FileHandler('/var/log/camserv/camserv.log')
+handler = logging.FileHandler(app.log_path)
 formatter = logging.Formatter(
     '[%(asctime)s] [%(levelname)s] %(message)s',
     datefmt='%Y-%m-%d %H:%M:%S'
