@@ -21,9 +21,6 @@ A database needs to be created and the name and user information should be added
 Requires a config file named `camserv.conf` located in the root directory of the repository.  An example config is shown below.
 
 ```
-[api]
-key=<api-key-must-match-clients-key>
-
 [db]
 adapter=mysql
 user=<database-user>
